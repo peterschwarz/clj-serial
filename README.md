@@ -1,5 +1,6 @@
-
 # clj-serial
+
+[![Build Status](https://travis-ci.org/peterschwarz/clj-serial.png?branch=master)](https://travis-ci.org/peterschwarz/clj-serial)
 
 A simple library for serial port communication with Clojure. Although serial communciation may be considered old tech, it's useful for a communicating with a plethora of devices including exciting new hardware such as the [Monome](http://monome.org) and the [Arduino](http://arduino.cc).
 

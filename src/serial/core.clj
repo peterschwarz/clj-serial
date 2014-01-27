@@ -1,4 +1,4 @@
-(ns serial-port.core
+(ns serial.core
   (:import
    [purejavacomm CommPortIdentifier
                  SerialPort

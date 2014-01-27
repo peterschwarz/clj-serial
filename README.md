@@ -1,46 +1,14 @@
 
-                     ...88888888888888888888888888888888888...
-                   ... 08                                  80...
-                  ++..08   MMMMMMMMMMMMMMMMMMMMMMMMMMMMM    80..++
-           OOOOOOOO..08   MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM   80..OOOOOOOO
-          O ,..      08  MMMMMMM  MMMMM  MMMM  MMMM  MMMMMM  80          O
-         O ,    `   08  MMMMMMM    MMM    MM    MM    MMMMMM  80   ,'''`  O
-        O ,  ++  `  08  MMMMMMMM  MMMMM  MMMM  MMMM  MMMMMMM  80  '  ++ `  O
-        O , ++++ ' 08  MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM  80 ' ++++ ' O
-        O  . ++  ' 08  MMMMMM  MMMMM  MMMM  MMMM  MMMM  MMMMM  80  . ++  , O
-         O  ....' 08  MMMMMM    MMM    MM    MM    MM    MMMMM  80  ....' O
-          O       08  MMMMMMM  MMMMM  MMMM  MMMM  MMMM  MMMMMM  80       O
-           OOOOO..8    MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM    8..OOOOO
-               +.08     MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM     80.+
-                  08                                            80
-                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-
-# serial-port
+# clj-serial
 
 A simple library for serial port communication with Clojure. Although serial communciation may be considered old tech, it's useful for a communicating with a plethora of devices including exciting new hardware such as the [Monome](http://monome.org) and the [Arduino](http://arduino.cc).
 
-## Dependencies
-
-`serial-port` has the following dependencies:
-
-* [Clojure 1.2 or 1.3](http://clojure.org)
-* [RxTx](http://rxtx.qbang.org) (jar and native binary for your OS and CPU architecture)
 
 ## Installation
 
-The easiest way to to install `serial-port` is requiring the [serial-port clojar](http://clojars.org/serial-port) in your `project.clj` and using [cake](http://clojure-cake.org/) to pull the dependencies. Cake has great support for native dependencies and the [serial-port clojar](http://clojars.org/serial-port) depends on the [rxtx22 clojar](http://clojars.org/rxtx22) which packages the [RxTx native libraries](http://rxtx.qbang.org).
+Add the following to your `project.clj` dependencies:
 
-All this means you simply need to add `serial-port` to your list of dependencies in your `project.clj`:
-
-    (defproject your-project "0.1.5"
-      :description "Your fabulous project that uses a serial connection"
-      :dependencies [[org.clojure/clojure "1.3.0"]
-                     [serial-port "1.1.0"]])
-
-(Where `1.1.0` is replaced with the version you wish to use.)
-
-Then run `cake deps` and cake will pull the correct dependencies (both native libs and jars) and put them in the right place for you to use with `cake repl` or `cake swank`.
+    [clj-serial "1.0.0-SNAPSHOT"]
 
 ## Usage
 
@@ -64,23 +32,6 @@ In order to connect to your serial device you need to know the path of the file 
     5 : /dev/cu.Bluetooth-Modem
 
 In this case, we have an Arduino connected to `/dev/tty.usbmodemfa141`.
-
-#### Problem on Ubuntu Linux
-
-From ubuntu linux 11.04 and forward, you may not see your device.
-The RXTX library searches for serial ports with the `/dev/ttySxx` naming convention.
-Your device may be called `/dev/ttyACM0` and so is not found.
-
-From the repl point of view, you could make your system aware of it:
-
-    (System/setProperty "gnu.io.rxtx.SerialPorts" "/dev/ttyACM0")
-
-From the OS point of view:
-You could create a symbolic link with a name that satisfies this, so for example:
-
-    sudo ln -s /dev/ttyACM0 /dev/ttyS42
-
-src: http://rxtx.qbang.org/wiki/index.php/Discovering_comm_ports
 
 ### Connecting with a port identifier
 
@@ -129,11 +80,11 @@ Simply use the `close` function:
 
 ## Contributors
 
+Forked from [samaaron/serial-port](https://github.com/samaaron/serial-port), by
+
 * Sam Aaron
 * Jeff Rose
 
 ## License
-
-Copyright (C) 2011 Sam Aaron
 
 Distributed under the Eclipse Public License, the same as Clojure.

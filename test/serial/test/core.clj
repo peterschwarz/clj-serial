@@ -1,6 +1,6 @@
-(ns serial-port.test.core
+(ns serial.test.core
   (:require [clojure.test :refer :all]
-            [serial-port.core :refer :all]))
+            [serial.core :refer :all]))
 
 (deftest port-ids-test
   (let [ports (port-ids)]

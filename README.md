@@ -16,7 +16,7 @@ Add the following to your `project.clj` dependencies:
 
 Just make sure you pull in the `serial-port` namespace using something like:
 
-    (use 'serial-port)
+    (use 'serial.core)
 
 ### Finding your port identifier
 

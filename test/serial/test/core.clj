@@ -4,5 +4,5 @@
 
 (deftest port-ids-test
   (let [ports (port-ids)]
-    (is (not (empty? ports)))))
+    (is (not (nil? ports)))))
 

@@ -4,3 +4,7 @@ lib
 classes
 .cake
 META-INF
+target
+.lein-failures
+.lein-repl-history
+.nrepl-port

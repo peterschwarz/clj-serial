@@ -1,6 +1,10 @@
 (ns serial-port.test.core
-  (:use [serial-port.core] :reload)
-  (:use [clojure.test]))
+  (:require [clojure.test :refer :all]
+            [serial-port.core :refer :all]))
 
-(deftest replace-me ;; FIXME: write
-  (is false "No tests have been written."))
+(deftest port-ids-test
+  (let [ports (port-ids)]
+    (is (not (empty? ports)))))
+
+(run-tests)
+

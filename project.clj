@@ -1,4 +1,5 @@
-(defproject serial-port "1.1.2"
-  :description "Simple serial port comms library. Wraps RxTx."
-  :dependencies [[org.clojure/clojure "1.3.0"]
-                 [rxtx22 "1.0.6"]])
+(defproject serial-port "1.2.0"
+  :description "Simple serial port comms library. Wraps PureJavaComm."
+  :dependencies [[org.clojure/clojure "1.5.1"]
+                 [com.sparetimelabs/purejavacomm "0.0.21"]]
+  :repositories [["javacomm" "http://www.sparetimelabs.com/maven2"]])

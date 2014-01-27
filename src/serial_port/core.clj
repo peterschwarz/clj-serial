@@ -1,11 +1,11 @@
-(ns serial-port
+(ns serial-port.core
   (:import
-   (gnu.io CommPortIdentifier
-           SerialPort
-           SerialPortEventListener
-           SerialPortEvent)
-   (java.io OutputStream
-            InputStream)))
+   [purejavacomm CommPortIdentifier
+                 SerialPort
+                 SerialPortEventListener
+                 SerialPortEvent]
+   [java.io OutputStream
+            InputStream]))
 
 (def PORT-OPEN-TIMEOUT 2000)
 (defrecord Port [path raw-port out-stream in-stream])

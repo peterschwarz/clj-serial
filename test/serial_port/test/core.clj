@@ -6,5 +6,3 @@
   (let [ports (port-ids)]
     (is (not (empty? ports)))))
 
-(run-tests)
-

@@ -10,10 +10,15 @@
 (def PORT-OPEN-TIMEOUT 2000)
 (defrecord Port [path raw-port out-stream in-stream])
 
+(defn raw-port-ids
+  "Returns the raw java Enumeration of port identifiers"
+  []
+  (CommPortIdentifier/getPortIdentifiers))
+
 (defn port-ids
   "Returns a seq representing all port identifiers visible to the system"
   []
-  (enumeration-seq (CommPortIdentifier/getPortIdentifiers)))
+  (enumeration-seq (raw-port-ids)))
 
 (defn port-at
   "Returns the name of the serial port at idx."

@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/peterschwarz/clj-serial.png?branch=master)](https://travis-ci.org/peterschwarz/clj-serial)
 
-A simple library for serial port communication with Clojure. Although serial communciation may be considered old tech, it's useful for a communicating with a plethora of devices including exciting new hardware such as the [Monome](http://monome.org) and the [Arduino](http://arduino.cc).  It's powerd by [PureJavaComm] (https://github.com/nyholku/purejavacomm)for serial communication
+A simple library for serial port communication with Clojure. Although serial communciation may be considered old tech, it's useful for a communicating with a plethora of devices including exciting new hardware such as the [Monome](http://monome.org) and the [Arduino](http://arduino.cc).  It's powerd by [PureJavaComm] (https://github.com/nyholku/purejavacomm) for serial communication
 
 
 ## Installation
@@ -15,13 +15,13 @@ Add the following to your `project.clj` dependencies:
 
 ### Using the library
 
-Just make sure you pull in the `serial-port` namespace using something like:
+Just make sure you pull in the `serial.core` namespace using something like:
 
     (use 'serial.core)
 
 ### Finding your port identifier
 
-In order to connect to your serial device you need to know the path of the file it presents itself on. `serial-port` provides a simple function to list these paths out:
+In order to connect to your serial device you need to know the path of the file it presents itself on. `serial.core` provides a simple function to list these paths out:
 
     => (list-ports)
 

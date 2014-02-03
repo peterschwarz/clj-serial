@@ -63,23 +63,28 @@
        (catch Exception e
          (throw (Exception. (str "Sorry, couldn't connect to the port with path " path )))))))
 
-(defn write
-  "Write a byte array to a port"
+(defn- write-bytes
+  "Writes a byte array to a port"
   [port bytes]
   (.write ^OutputStream (:out-stream port) ^bytes bytes))
 
+(defn- write-byte
+  "Writes a byte to a port"
+  [port b]
+  (.write ^OutputStream (:out-stream port) (int b)))
+
 (defn- compose-byte-array [bytes]
-  (byte-array (count bytes) (map #(.byteValue ^Integer %) bytes)))
+  (byte-array (count bytes) (map #(.byteValue ^Number %) bytes)))
 
-(defn write-int-seq
-  "Write a seq of Integers as bytes to the port."
-  [port ints]
-  (write port (compose-byte-array ints)))
+(defmulti write (fn [_ obj] (class obj)))
 
-(defn write-int
-  "Write an Integer as a byte to the port."
-  [port int]
-  (write port (compose-byte-array (list int))))
+(defmethod write (class (byte-array 0))
+  [port bytes]
+  (write-bytes port bytes))
+
+(defmethod write Number
+  [port value]
+  (write-byte port (.byteValue value)))
 
 (defn listen
   "Register a function to be called for every byte received on the specified port."

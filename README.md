@@ -68,10 +68,11 @@ The simplest way to write bytes is by passing a byte array to `write`:
 
     (write port my-byte-array)
 
-There are a couple of convenience functions available if you're dealing with plain Integers. `write-int` allows you to write a simple integer to the serial port and `write-int-seq` allows you to pass a sequence of integers which are then converted to a byte array which is subsequently written to the serial port:
+This also works with Numbers
 
-    (write-int port 20)
-    (write-int-seq port [20 10 2 100])
+    (write port 20)
+    
+TODO: Extend this to sequences of numbers
 
 ### Closing the port
 
@@ -80,6 +81,8 @@ Simply use the `close` function:
     (close port)
 
 ## Contributors
+
+* Peter Schwarz
 
 Forked from [samaaron/serial-port](https://github.com/samaaron/serial-port), by
 

@@ -21,6 +21,14 @@
   []
   {:out-stream (ByteArrayOutputStream.)})
 
+(defn- byte-at
+  [port index]
+  (-> port
+        :out-stream
+        .toByteArray
+        ByteBuffer/wrap
+        (.get index)))
+
 (defn- read-last
   [port]
     (-> port
@@ -40,6 +48,21 @@
     (let [port (mock-port)]
       (write port 12)
       (is (= (byte 12) (read-last port)))))
+
+  (testing "A list should be written to the port's output stream"
+    (let [port (mock-port)]
+      (write port '(12 13 14))
+      (is (= (byte 12) (byte-at port 0)))
+      (is (= (byte 13) (byte-at port 1)))
+      (is (= (byte 14) (byte-at port 2)))))
+
+  (testing "A vector should be written to the port's output stream"
+    (let [port (mock-port)]
+      (write port [12 13 14])
+      (is (= (byte 12) (byte-at port 0)))
+      (is (= (byte 13) (byte-at port 1)))
+      (is (= (byte 14) (byte-at port 2)))))
+
   )
 
 (run-tests)

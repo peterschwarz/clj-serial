@@ -86,6 +86,11 @@
   [port value]
   (write-byte port (.byteValue value)))
 
+(defmethod write clojure.lang.Sequential
+  [port values]
+  (write-bytes port (compose-byte-array values))
+  )
+
 (defn listen
   "Register a function to be called for every byte received on the specified port."
   ([port handler] (listen port handler true))

@@ -66,17 +66,21 @@
 (defn- write-bytes
   "Writes a byte array to a port"
   [port bytes]
-  (.write ^OutputStream (:out-stream port) ^bytes bytes))
+  (let [out (:out-stream port)]
+    (.write ^OutputStream out ^bytes bytes)
+    (.flush out)))
 
 (defn- write-byte
   "Writes a byte to a port"
   [port b]
-  (.write ^OutputStream (:out-stream port) (int b)))
+  (write-bytes port (byte-array 1 b)))
 
 (defn- compose-byte-array [bytes]
   (byte-array (count bytes) (map #(.byteValue ^Number %) bytes)))
 
-(defmulti write (fn [_ obj] (class obj)))
+(defmulti write
+  "Write a value to the port."
+  (fn [_ obj] (class obj)))
 
 (defmethod write (class (byte-array 0))
   [port bytes]
@@ -88,8 +92,7 @@
 
 (defmethod write clojure.lang.Sequential
   [port values]
-  (write-bytes port (compose-byte-array values))
-  )
+  (write-bytes port (compose-byte-array values)))
 
 (defn listen
   "Register a function to be called for every byte received on the specified port."

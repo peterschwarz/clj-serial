@@ -9,7 +9,7 @@ A simple library for serial port communication with Clojure. Although serial com
 
 Add the following to your `project.clj` dependencies:
 
-    [clj-serial "1.0.0-SNAPSHOT"]
+    [clj-serial "1.0.0"]
 
 ## Usage
 
@@ -68,11 +68,13 @@ The simplest way to write bytes is by passing a byte array to `write`:
 
     (write port my-byte-array)
 
-This also works with Numbers
+This also works with any `Number`
 
     (write port 20)
     
-TODO: Extend this to sequences of numbers
+As well as any `Sequential`
+
+    (write port [0xf0 0x79 0xf7]) 
 
 ### Closing the port
 

@@ -1,4 +1,4 @@
-(defproject clj-serial "1.0.0"
+(defproject clj-serial "1.0.1-SNAPSHOT"
   :description "Simple serial port library. Wraps PureJavaComm."
   :url "https://github.com/peterschwarz/clj-serial"
   :license {:name "Eclipse Public License - v 1.0"

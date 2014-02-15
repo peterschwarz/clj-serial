@@ -6,16 +6,6 @@
            [java.io ByteArrayOutputStream]
            [java.nio ByteBuffer]))
 
-(deftest port-ids-test
-  (testing "Empty port identifiers"
-    (with-redefs [raw-port-ids (fn [] (proxy [Enumeration] []
-                                        (hasMoreElements [] false)
-                                        (nextElement [] nil)))]
-      (let [ports (port-ids)]
-        (is (nil? ports ))))
-    )
-  )
-
 
 (defn- mock-port
   []

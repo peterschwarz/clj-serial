@@ -10,7 +10,7 @@
 (def PORT-OPEN-TIMEOUT 2000)
 (defrecord Port [path raw-port out-stream in-stream])
 
-(defn raw-port-ids
+(defn- raw-port-ids
   "Returns the raw java Enumeration of port identifiers"
   []
   (CommPortIdentifier/getPortIdentifiers))
@@ -20,20 +20,6 @@
   []
   (enumeration-seq (raw-port-ids)))
 
-(defn port-at
-  "Returns the name of the serial port at idx."
-  [idx]
-  (.getName (nth (port-ids) idx)))
-
-(defn list-ports
-  "Print out the available ports with an index number for future reference
-  with (port-at <i>)."
-  []
-  (loop [ports (port-ids)
-         idx 0]
-    (when ports
-      (println idx ":" (.getName (first ports)))
-      (recur (next ports) (inc idx)))))
 
 (defn close
   "Closes an open port."
@@ -115,21 +101,3 @@
   "De-register the listening fn for the specified port"
   [port]
   (.removeEventListener (:raw-port port)))
-
-(defn on-n-bytes
-  "Partitions the incoming byte stream into seqs of size n and calls handler passing each partition."
-  ([port n handler] (on-n-bytes port n handler true))
-  ([port n handler skip-buffered?]
-     (listen port (fn [^InputStream in-stream]
-                    (if (>= (.available in-stream) n)
-                      (handler (doall (repeatedly n #(.read in-stream))))))
-             skip-buffered?)))
-
-(defn on-byte
-  "Calls handler for each byte received"
-  ([port handler] (on-byte port handler true))
-  ([port handler skip-buffered?]
-     (listen port (fn [^InputStream in-stream]
-                    (handler (.read in-stream)))
-             skip-buffered?)))
-

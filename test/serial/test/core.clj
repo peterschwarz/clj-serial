@@ -6,16 +6,6 @@
            [java.io ByteArrayOutputStream]
            [java.nio ByteBuffer]))
 
-(deftest port-ids-test
-  (testing "Empty port identifiers"
-    (with-redefs [raw-port-ids (fn [] (proxy [Enumeration] []
-                                        (hasMoreElements [] false)
-                                        (nextElement [] nil)))]
-      (let [ports (port-ids)]
-        (is (nil? ports ))))
-    )
-  )
-
 
 (defn- mock-port
   []
@@ -23,19 +13,13 @@
 
 (defn- byte-at
   [port index]
-  (-> port
-        :out-stream
-        .toByteArray
-        ByteBuffer/wrap
-        (.get index)))
-
-(defn- read-last
-  [port]
-    (-> port
-        :out-stream
-        .toByteArray
-        ByteBuffer/wrap
-        .get))
+  (let [bees (-> port
+                 :out-stream
+                 .toByteArray
+                 )]
+    (if (< index (alength bees))
+      (aget bees index)
+      nil)))
 
 (deftest write-test
   (testing "Bytes should be written to the Port's output stream"
@@ -47,7 +31,7 @@
   (testing "An int should be written to the Port's output stream"
     (let [port (mock-port)]
       (write port 12)
-      (is (= (byte 12) (read-last port)))))
+      (is (= (byte 12) (byte-at port 0)))))
 
   (testing "A list should be written to the port's output stream"
     (let [port (mock-port)]
@@ -62,6 +46,15 @@
       (is (= (byte 12) (byte-at port 0)))
       (is (= (byte 13) (byte-at port 1)))
       (is (= (byte 14) (byte-at port 2)))))
+
+  (testing "arbitrary values to the port"
+    (let [port (mock-port)]
+      (write port 12 [13 14] (.getBytes "H" "ASCII"))
+
+      (is (= (byte 12) (byte-at port 0)))
+      (is (= (byte 13) (byte-at port 1)))
+      (is (= (byte 14) (byte-at port 2)))
+      (is (= (byte \H) (byte-at port 3)))))
 
   )
 

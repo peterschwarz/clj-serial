@@ -1,13 +1,32 @@
 (ns serial.core
   (:import
    [purejavacomm CommPortIdentifier
-                 SerialPort
                  SerialPortEventListener
                  SerialPortEvent]
    [java.io OutputStream
             InputStream]))
 
-(def PORT-OPEN-TIMEOUT 2000)
+(def ^{:private true} PORT-OPEN-TIMEOUT 2000)
+
+(def  DATABITS_5  5)
+(def  DATABITS_6  6)
+(def  DATABITS_7  7)
+(def  DATABITS_8  8)
+(def  PARITY_NONE   0)
+(def  PARITY_ODD    1)
+(def  PARITY_EVEN   2)
+(def  PARITY_MARK   3)
+(def  PARITY_SPACE  4)
+(def  STOPBITS_1    1)
+(def  STOPBITS_2    2)
+(def  STOPBITS_1_5  3)
+(def  FLOWCONTROL_NONE        0)
+(def  FLOWCONTROL_RTSCTS_IN   1)
+(def  FLOWCONTROL_RTSCTS_OUT  2)
+(def  FLOWCONTROL_XONXOFF_IN  4)
+(def  FLOWCONTROL_XONXOFF_OUT 8)
+
+
 (defrecord Port [path raw-port out-stream in-stream])
 
 (defn- raw-port-ids
@@ -29,11 +48,16 @@
     (.close raw-port)))
 
 (defn open
-  "Returns an opened serial port. Allows you to specify the baud-rate (defaults to 115200).
+  "Returns an opened serial port. Allows you to specify the :baud-rate (defaults to 115200),
+  :stopbits (defaults to STOPBITS_1), :databits (defaults to DATABITS_8) and :parity (defaults to PARITY_NONE).
+
+  Additionally, setting the value of :
+
   (open \"/dev/ttyUSB0\")
-  (open \"/dev/ttyUSB0\" 9200)"
-  ([path] (open path 115200))
-  ([path baud-rate]
+  (open \"/dev/ttyUSB0\" :baud-rate 9200)"
+
+  ([path [& {:keys [baud-rate databits stopbits parity]
+             :or {baud-rate 115200, databits DATABITS_8, stopbits STOPBITS_1, parity PARITY_NONE}}]]
      (try
        (let [uuid     (.toString (java.util.UUID/randomUUID))
              port-id  (first (filter #(= path (.getName %)) (port-ids)))
@@ -41,13 +65,26 @@
              out      (.getOutputStream raw-port)
              in       (.getInputStream  raw-port)
              _        (.setSerialPortParams raw-port baud-rate
-                                            SerialPort/DATABITS_8
-                                            SerialPort/STOPBITS_1
-                                            SerialPort/PARITY_NONE)]
+                                            databits
+                                            stopbits
+                                            parity)]
 
          (Port. path raw-port out in))
        (catch Exception e
          (throw (Exception. (str "Sorry, couldn't connect to the port with path " path )))))))
+
+(defprotocol Bytable
+  (to-bytes [this] "Converts the type to bytes"))
+
+(extend-protocol Bytable
+  (class (byte-array 0))
+  (to-bytes [this] this)
+
+  Number
+  (to-bytes [this] (byte-array 1 (.byteValue this)))
+
+  clojure.lang.Sequential
+  (to-bytes [this] (byte-array (count this)(map #(.byteValue ^Number %) this))))
 
 (defn- write-bytes
   "Writes a byte array to a port"
@@ -56,29 +93,18 @@
     (.write ^OutputStream out ^bytes bytes)
     (.flush out)))
 
-(defn- write-byte
-  "Writes a byte to a port"
-  [port b]
-  (write-bytes port (byte-array 1 b)))
+(defn write
+  "Writes the given data to the port and returns it. All number literals are treated as bytes.
+  By extending the protocol Bytable, any arbitray values can be sent to the output stream.
+  For example:
+     (extend-protocol Bytable
+      String
+      (to-bytes [this] (.getBytes this \"ASCII\")))"
+  [port & data]
+  (doseq [x data]
+    (write-bytes port (to-bytes x)))
+  port)
 
-(defn- compose-byte-array [bytes]
-  (byte-array (count bytes) (map #(.byteValue ^Number %) bytes)))
-
-(defmulti write
-  "Write a value to the port."
-  (fn [_ obj] (class obj)))
-
-(defmethod write (class (byte-array 0))
-  [port bytes]
-  (write-bytes port bytes))
-
-(defmethod write Number
-  [port value]
-  (write-byte port (.byteValue value)))
-
-(defmethod write clojure.lang.Sequential
-  [port values]
-  (write-bytes port (compose-byte-array values)))
 
 (defn listen
   "Register a function to be called for every byte received on the specified port."
@@ -101,21 +127,4 @@
   "De-register the listening fn for the specified port"
   [port]
   (.removeEventListener (:raw-port port)))
-
-(defn on-n-bytes
-  "Partitions the incoming byte stream into seqs of size n and calls handler passing each partition."
-  ([port n handler] (on-n-bytes port n handler true))
-  ([port n handler skip-buffered?]
-     (listen port (fn [^InputStream in-stream]
-                    (if (>= (.available in-stream) n)
-                      (handler (doall (repeatedly n #(.read in-stream))))))
-             skip-buffered?)))
-
-(defn on-byte
-  "Calls handler for each byte received"
-  ([port handler] (on-byte port handler true))
-  ([port handler skip-buffered?]
-     (listen port (fn [^InputStream in-stream]
-                    (handler (.read in-stream)))
-             skip-buffered?)))
 

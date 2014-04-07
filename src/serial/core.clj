@@ -56,8 +56,8 @@
   (open \"/dev/ttyUSB0\")
   (open \"/dev/ttyUSB0\" :baud-rate 9200)"
 
-  ([path [& {:keys [baud-rate databits stopbits parity]
-             :or {baud-rate 115200, databits DATABITS_8, stopbits STOPBITS_1, parity PARITY_NONE}}]]
+  ([path & {:keys [baud-rate databits stopbits parity]
+             :or {baud-rate 115200, databits DATABITS_8, stopbits STOPBITS_1, parity PARITY_NONE}}]
      (try
        (let [uuid     (.toString (java.util.UUID/randomUUID))
              port-id  (first (filter #(= path (.getName %)) (port-ids)))

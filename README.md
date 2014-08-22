@@ -9,7 +9,7 @@ A simple library for serial port communication with Clojure. Although serial com
 
 Add the following to your `project.clj` dependencies:
 
-    [clj-serial "2.0.1"]
+    [clj-serial "2.0.2"]
 
 ## Usage
 

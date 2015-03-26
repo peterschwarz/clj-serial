@@ -12,3 +12,5 @@ target
 # Intellij
 .idea
 *.iml
+
+*.sublime-*

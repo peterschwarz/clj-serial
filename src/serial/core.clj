@@ -1,10 +1,9 @@
 (ns serial.core
-  (:import
-   [purejavacomm CommPortIdentifier
-                 SerialPortEventListener
-                 SerialPortEvent]
-   [java.io OutputStream
-            InputStream]))
+  (:import [purejavacomm CommPortIdentifier
+                         SerialPortEventListener
+                         SerialPortEvent]
+           [java.io OutputStream
+                    InputStream]))
 
 (def ^{:private true} PORT-OPEN-TIMEOUT 2000)
 
@@ -34,10 +33,13 @@
   []
   (CommPortIdentifier/getPortIdentifiers))
 
-(defn port-ids
+(defn port-identifiers
   "Returns a seq representing all port identifiers visible to the system"
   []
   (enumeration-seq (raw-port-ids)))
+
+(def ^{:deprecated "2.0.3" :doc "Deprecated; use `port-identifiers`"}
+  port-ids port-identifiers)
 
 (defn port-identifier
   [path]
@@ -50,10 +52,8 @@
     (.removeEventListener raw-port)
     (.close raw-port)))
 
-(defn ^{:deprecated "2.0.3"} close
-  "Deprecated; use `close!` instead"
-  [port]
-  (close! port))
+(def ^{:deprecated "2.0.3" :doc "Deprecated; use `close!` instead"}
+  close close!)
 
 (defn open
   "Returns an opened serial port. Allows you to specify the
@@ -123,7 +123,7 @@
   "Register a function to be called for every byte received on the specified port.
   
   Only one listener is allowed at a time."
-  ([port handler] (listen port handler true))
+  ([port handler] (listen! port handler true))
   ([port handler skip-buffered?]
      (let [raw-port  (:raw-port port)
            in-stream (:in-stream port)
@@ -138,13 +138,13 @@
        (.addEventListener raw-port listener)
        (.notifyOnDataAvailable raw-port true))))
 
-(defn ^{:deprecated "2.0.3"} listen
-  "Deprecated; use `listen!` instead"
-  ([port handler] (listen! port handler true))
-  ([port handler skip-buffered?] (listen! port handler skip-buffered?)))
+(def ^{:deprecated "2.0.3" :doc "Deprecated; use `listen!` instead"}
+  listen listen!)
 
-(defn remove-listener
+(defn unlisten!
   "De-register the listening fn for the specified port"
   [port]
   (.removeEventListener (:raw-port port)))
 
+(def ^{:deprecated "2.0.3" :doc "Deprecated; use `unlisten!` instead"}
+  remove-listener unlisten!)

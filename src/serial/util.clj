@@ -1,7 +1,8 @@
 (ns serial.util
-  (:require [serial.core :refer :all]))
+  (:require [serial.core :refer [port-identifiers]]))
 
 (defn list-ports
-  "Print out the available ports. The names are printed exactly as they should be passed to open."
+  "Print out the available ports.
+   The names printed may be passed to `serial.core/open` as printed."
   []
-  (doall (map #(println (.getName %)) (port-ids))))
+  (doall (map #(println (.getName %)) (port-identifiers))))

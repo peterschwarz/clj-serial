@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License - v 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [com.sparetimelabs/purejavacomm "0.0.21"]]
+                 [com.sparetimelabs/purejavacomm "0.0.22"]]
   :repositories [["javacomm" "http://www.sparetimelabs.com/maven2"]]
   :scm {:name "git"
         :url "https://github.com/peterschwarz/clj-serial"})

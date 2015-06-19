@@ -128,7 +128,8 @@
      (let [raw-port  (:raw-port port)
            in-stream (:in-stream port)
            listener  (reify SerialPortEventListener
-                       (serialEvent [_ event] (when (= SerialPortEvent/DATA_AVAILABLE (.getEventType event))
+                       (serialEvent [_ event] (when (= SerialPortEvent/DATA_AVAILABLE
+                                                       (.getEventType event))
                                                 (handler in-stream))))]
 
        (if skip-buffered?

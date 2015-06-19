@@ -39,17 +39,29 @@
   []
   (enumeration-seq (raw-port-ids)))
 
+(defn port-identifier
+  [path]
+  (CommPortIdentifier/getPortIdentifier path))
 
-(defn close
+(defn close! 
   "Closes an open port."
   [port]
   (let [raw-port (:raw-port port)]
     (.removeEventListener raw-port)
     (.close raw-port)))
 
+(defn ^{:deprecated "2.0.3"} close
+  "Deprecated; use `close!` instead"
+  [port]
+  (close! port))
+
 (defn open
-  "Returns an opened serial port. Allows you to specify the :baud-rate (defaults to 115200),
-  :stopbits (defaults to STOPBITS_1), :databits (defaults to DATABITS_8) and :parity (defaults to PARITY_NONE).
+  "Returns an opened serial port. Allows you to specify the
+
+  * :baud-rate (defaults to 115200)
+  * :stopbits (defaults to STOPBITS_1)
+  * :databits (defaults to DATABITS_8)
+  * :parity (defaults to PARITY_NONE).
 
   Additionally, setting the value of :
 
@@ -60,7 +72,7 @@
              :or {baud-rate 115200, databits DATABITS_8, stopbits STOPBITS_1, parity PARITY_NONE}}]
      (try
        (let [uuid     (.toString (java.util.UUID/randomUUID))
-             port-id  (first (filter #(= path (.getName %)) (port-ids)))
+             port-id  (port-identifier path)
              raw-port (.open port-id uuid PORT-OPEN-TIMEOUT)
              out      (.getOutputStream raw-port)
              in       (.getInputStream  raw-port)
@@ -69,9 +81,10 @@
                                             stopbits
                                             parity)]
 
+         (assert (not (nil? port-id)) (str "Port specified by path " path " is not available"))
          (Port. path raw-port out in))
        (catch Exception e
-         (throw (Exception. (str "Sorry, couldn't connect to the port with path " path )))))))
+         (throw (Exception. (str "Sorry, couldn't connect to the port with path " path ) e))))))
 
 (defprotocol Bytable
   (to-bytes [this] "Converts the type to bytes"))
@@ -106,8 +119,10 @@
   port)
 
 
-(defn listen
-  "Register a function to be called for every byte received on the specified port."
+(defn listen!
+  "Register a function to be called for every byte received on the specified port.
+  
+  Only one listener is allowed at a time."
   ([port handler] (listen port handler true))
   ([port handler skip-buffered?]
      (let [raw-port  (:raw-port port)
@@ -122,6 +137,11 @@
 
        (.addEventListener raw-port listener)
        (.notifyOnDataAvailable raw-port true))))
+
+(defn ^{:deprecated "2.0.3"} listen
+  "Deprecated; use `listen!` instead"
+  ([port handler] (listen! port handler true))
+  ([port handler skip-buffered?] (listen! port handler skip-buffered?)))
 
 (defn remove-listener
   "De-register the listening fn for the specified port"

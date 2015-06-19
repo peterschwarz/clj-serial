@@ -55,7 +55,5 @@
       (is (= (byte 13) (byte-at port 1)))
       (is (= (byte 14) (byte-at port 2)))
       (is (= (byte \H) (byte-at port 3)))))
-
   )
 
-(run-tests)

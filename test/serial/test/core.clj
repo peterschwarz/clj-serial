@@ -4,12 +4,13 @@
   (:import [purejavacomm CommPortIdentifier]
            [java.util Enumeration]
            [java.io ByteArrayOutputStream]
-           [java.nio ByteBuffer]))
+           [java.nio ByteBuffer]
+           [serial.core Port]))
 
 
 (defn- mock-port
   []
-  {:out-stream (ByteArrayOutputStream.)})
+  (Port. "test" nil (ByteArrayOutputStream.) nil))
 
 (defn- byte-at
   [port index]

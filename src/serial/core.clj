@@ -1,5 +1,6 @@
 (ns serial.core
   (:import [purejavacomm CommPortIdentifier
+                         SerialPort
                          SerialPortEventListener
                          SerialPortEvent]
            [java.io OutputStream
@@ -42,13 +43,13 @@
   port-ids port-identifiers)
 
 (defn port-identifier
-  [path]
+  ^CommPortIdentifier [^String path]
   (CommPortIdentifier/getPortIdentifier path))
 
 (defn close! 
   "Closes an open port."
-  [port]
-  (let [raw-port (:raw-port port)]
+  [^Port port]
+  (let [raw-port ^SerialPort (.raw-port port)]
     (.removeEventListener raw-port)
     (.close raw-port)))
 
@@ -73,7 +74,7 @@
      (try
        (let [uuid     (.toString (java.util.UUID/randomUUID))
              port-id  (port-identifier path)
-             raw-port (.open port-id uuid PORT-OPEN-TIMEOUT)
+             raw-port ^SerialPort (.open port-id uuid PORT-OPEN-TIMEOUT)
              out      (.getOutputStream raw-port)
              in       (.getInputStream  raw-port)
              _        (.setSerialPortParams raw-port baud-rate
@@ -101,10 +102,10 @@
 
 (defn- write-bytes
   "Writes a byte array to a port"
-  [port bytes]
-  (let [out (:out-stream port)]
+  [^Port port bytes]
+  (let [out (.out-stream port)]
     (.write ^OutputStream out ^bytes bytes)
-    (.flush out)))
+    (.flush ^OutputStream out)))
 
 (defn write
   "Writes the given data to the port and returns it. All number literals are treated as bytes.
@@ -123,10 +124,10 @@
   "Register a function to be called for every byte received on the specified port.
   
   Only one listener is allowed at a time."
-  ([port handler] (listen! port handler true))
-  ([port handler skip-buffered?]
-     (let [raw-port  (:raw-port port)
-           in-stream (:in-stream port)
+  ([^Port port handler] (listen! port handler true))
+  ([^Port port handler skip-buffered?]
+     (let [raw-port  ^SerialPort (.raw-port port)
+           in-stream ^InputStream (.in-stream port)
            listener  (reify SerialPortEventListener
                        (serialEvent [_ event] (when (= SerialPortEvent/DATA_AVAILABLE
                                                        (.getEventType event))
@@ -144,8 +145,8 @@
 
 (defn unlisten!
   "De-register the listening fn for the specified port"
-  [port]
-  (.removeEventListener (:raw-port port)))
+  [^Port port]
+  (.removeEventListener ^SerialPort (.raw-port port)))
 
 (def ^{:deprecated "2.0.3" :doc "Deprecated; use `unlisten!` instead"}
   remove-listener unlisten!)

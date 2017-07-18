@@ -119,6 +119,11 @@
     (write-bytes port (to-bytes x)))
   port)
 
+(defn skip-input!
+  "Skips a specified amount of buffered input data."
+  ([^Port port] (skip-input! port (.available ^InputStream (.in-stream port))))
+  ([^Port port ^long to-drop]
+    (.skip ^InputStream (.in-stream port) to-drop)))
 
 (defn listen!
   "Register a function to be called for every byte received on the specified port.
@@ -133,9 +138,8 @@
                                                        (.getEventType event))
                                                 (handler in-stream))))]
 
-       (if skip-buffered?
-         (let [to-drop (.available in-stream)]
-           (.skip in-stream to-drop)))
+       (when skip-buffered?
+         (skip-input! port))
 
        (.addEventListener raw-port listener)
        (.notifyOnDataAvailable raw-port true))))

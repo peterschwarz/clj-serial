@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License - v 1.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [com.sparetimelabs/purejavacomm "1.0.0"]]
+                 [com.sparetimelabs/purejavacomm "1.0.1"]]
   :repositories [["javacomm" "http://www.sparetimelabs.com/maven2"]]
   :profiles {:1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
              :1.7 {:dependencies [[org.clojure/clojure "1.7.0"]]}}

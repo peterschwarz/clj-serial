@@ -6,8 +6,6 @@
            [java.io OutputStream
                     InputStream]))
 
-(def ^{:private true} PORT-OPEN-TIMEOUT 2000)
-
 (def  DATABITS_5  5)
 (def  DATABITS_6  6)
 (def  DATABITS_7  7)
@@ -63,18 +61,19 @@
   * :stopbits (defaults to STOPBITS_1)
   * :databits (defaults to DATABITS_8)
   * :parity (defaults to PARITY_NONE).
+  * :timeout in milliseconds (defaults to 2000)
 
   Additionally, setting the value of :
 
   (open \"/dev/ttyUSB0\")
   (open \"/dev/ttyUSB0\" :baud-rate 9200)"
 
-  ([path & {:keys [baud-rate databits stopbits parity]
-             :or {baud-rate 115200, databits DATABITS_8, stopbits STOPBITS_1, parity PARITY_NONE}}]
+  ([path & {:keys [baud-rate databits stopbits parity timeout]
+             :or {baud-rate 115200, databits DATABITS_8, stopbits STOPBITS_1, parity PARITY_NONE, timeout 2000}}]
      (try
        (let [uuid     (.toString (java.util.UUID/randomUUID))
              port-id  (port-identifier path)
-             raw-port ^SerialPort (.open port-id uuid PORT-OPEN-TIMEOUT)
+             raw-port ^SerialPort (.open port-id uuid timeout)
              out      (.getOutputStream raw-port)
              in       (.getInputStream  raw-port)
              _        (.setSerialPortParams raw-port baud-rate
